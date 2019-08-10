@@ -1,0 +1,36 @@
+vector<int> a;  //heap
+int heapsize=0;   //heapsize
+
+void siftDown(int i) {
+	while (2 * i + 1 < heapsize) {
+		int left = 2 * i + 1;
+		int right = 2 * i + 2;
+		int j = left;
+		if (right < heapsize && a[right] < a[left]) {
+			j = right;
+		}
+		if (a[i] <= a[j])break;
+		swap(a[i], a[j]);
+		i = j;
+	}
+}
+
+void siftUp(int i) {
+	while (a[i] < a[(i - 1) / 2]) {
+		swap(a[i], a[(i - 1) / 2]);
+		i = (i - 1) / 2;
+	}
+}
+
+
+void insert(int key) {
+	heapsize++;
+	a.push_back(key);
+	siftUp(heapsize - 1);
+}
+
+void buildHeap() {
+	for (int i = heapsize / 2; i > -1; i--) {
+		siftDown(i);
+	}
+}
