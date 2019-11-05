@@ -1,0 +1,59 @@
+#include <iostream>
+#include <vector>
+
+using namespace std;
+vector<int> a;
+void merge(int left, int mid, int right) {
+    int it1 = 0;
+    int it2 = 0;
+    vector<int> result(right - left,0);
+
+    while(left + it1 < mid && mid + it2 <right){
+        if(a[left + it1] < a[mid + it2]) {
+            result[it1 + it2] = a[left + it1];
+            ++it1;
+        }
+        else {
+            result[it1 + it2] = a[mid + it2];
+            ++it2;
+        }
+    }
+    while(left + it1 < mid){
+        result[it1+it2] = a[left + it1];
+        ++it1;
+    }
+    while(mid + it2 < right){
+        result[it1+it2] = a[mid+it2];
+        ++it2;
+    }
+    for(int i = 0;i<it1+it2;i++){
+        a[left+i] = result[i];
+    }
+    result.clear(); // можно убрать, но есть шанс, что упадёт где-то по памяти
+}
+bool mergeSortRecursive(int left,int right) {
+    if(left + 1 >= right){
+        return true;
+    }
+    int mid = (left + right)/2;
+    mergeSortRecursive(left,mid);
+    mergeSortRecursive(mid,right);
+    merge(left,mid,right);
+    return true;
+}
+
+
+
+int main() {
+    int n;
+    cin>>n;
+    a.resize(n,0); // опасное явление))
+    for(size_t i = 0 ;i<a.size(); i++){
+        cin>>a[i];
+    }
+    mergeSortRecursive(0,int(a.size()));
+    for (auto it : a){
+        cout<<it<<" ";
+    }
+    return 0;
+}
