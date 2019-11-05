@@ -1,0 +1,122 @@
+#include <iostream>
+#include <cstring>
+#include <cstdlib>
+#include <string>
+#include <cmath>
+using namespace std;
+
+class Fraction{
+public:
+    void show();
+    Fraction(){
+        x=0;
+        y=1;
+    }
+    Fraction(long long x, long long y){
+        this -> x = x;
+        this -> y = y;
+    }
+    void read();
+    Fraction operator +(Fraction);
+    Fraction operator *(Fraction);
+    Fraction operator -(Fraction);
+    Fraction operator |(Fraction);
+    void operator -();
+    bool operator ==(Fraction);
+    void check_s();
+private:
+    long long x;
+    long long y;
+};
+
+Fraction Fraction::operator *(Fraction b){
+    long long xx,yy;
+    xx = x * b.x;
+    yy = y * b.y;
+    return Fraction(xx,yy);
+}
+
+Fraction Fraction::operator -(Fraction b){
+    b.x *= -1;
+    long long new_x, new_y;
+    new_x = x * abs(b.y) + b.x * abs(y);
+    new_y = y * b.y;
+    return Fraction(new_x, new_y);
+}
+
+Fraction Fraction::operator |(Fraction b){
+    long long xx,yy, t;
+    t = b.x;
+    b.x = b.y;
+    b.y = t;
+    xx = x * b.x;
+    yy = y * b.y;
+    return Fraction(xx,yy);
+}
+
+void Fraction::operator -() {
+    this -> y *= -1;
+}
+
+bool Fraction::operator ==(Fraction b) {
+    long long x1,x2;
+    x1 = this -> x * abs(b.y);
+    x2 = b.x * abs(this -> y);
+    return (x1==x2);
+}
+
+Fraction Fraction::operator +(Fraction b){
+    long long new_x, new_y;
+    new_x = x * abs(b.y) + b.x * abs(y);
+    new_y = y * b.y;
+    return Fraction(new_x, new_y);
+}
+
+void Fraction::check_s()
+{
+    if(x<0 && y<0){
+        x *= -1;
+        y *= -1;
+    }
+    else if(y<0){
+        y *= -1;
+        x *= -1;
+    }
+}
+
+void Fraction::show(){
+    cout << x << "/" << y << endl;
+}
+
+void Fraction::read(){
+    string cmd, xx, yy;
+    int length;
+    bool flag=true;
+    cin >> cmd;
+    length = cmd.length();
+    for(int i = 0; i < length; i++){
+        if(cmd[i]=='/'){
+            flag = false;
+            ++i;
+        }
+        if(flag)
+            xx += cmd[i];
+        else
+            yy += cmd[i];
+    }
+    x = atoi(xx.c_str());
+    y = atoi(yy.c_str());
+
+}
+
+int main() {
+    Fraction b,c;
+    long long num;
+    cin >> num;
+    Fraction a(num,1);
+    b.read();
+    b.check_s();
+    c = a-b;
+    c.show();
+    return 0;
+}
