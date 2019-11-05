@@ -1,6 +1,0 @@
-dual boot enabled 
-bcdedit /set {bootmgr} path \EFI\ubuntu\grubx64.efi
-or 
-bcdedit /deletevalue {bootmgr} path \EFI\ubuntu\grubx64.efi
-in order to boot back to windows use 
-bcdedit /set {bootmgr} path \EFI\Microsoft\Boot\bootmgfw.efi
