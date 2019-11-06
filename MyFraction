@@ -1,0 +1,71 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#include <cmath>
+
+using namespace std;
+
+int gcd (int a, int b) {
+    return b ? gcd (b, a % b) : a;
+}
+
+class Fraction{
+public:
+    long long top;
+    long long bottom;
+
+    Fraction(long long top, long long bottom){
+        this -> top = top;
+        this -> bottom = bottom;
+    }
+
+    static Fraction gcdF(Fraction start){
+        long long gcdN = gcd(start.top, start.bottom);
+        long long top = start.top/gcdN;
+        long long bottom = start.bottom/gcdN;
+        Fraction f = Fraction(top,bottom);
+        return f;
+    }
+
+    Fraction operator +(Fraction b) {
+        long long topN,bottomN;
+        topN = top*b.bottom + b.top*bottom;
+        bottomN = bottom * b.bottom;
+        Fraction f = Fraction(topN, bottomN);
+        f = gcdF(f);
+        return f;
+    }
+    Fraction operator -(Fraction b) {
+        long long topN,bottomN;
+        topN = top*b.bottom - b.top*bottom;
+        bottomN = bottom * b.bottom;
+        Fraction f = Fraction(topN, bottomN);
+        f = gcdF(f);
+        return f;
+    }
+
+    Fraction operator /(Fraction b) {
+        long long topN,bottomN;
+        topN = top*b.bottom;
+        bottomN = bottom * b.top;
+        Fraction f = Fraction(topN, bottomN);
+        f = gcdF(f);
+        return f;
+    }
+
+    Fraction operator *(Fraction b) {
+        long long topN,bottomN;
+        topN = top*b.top;
+        bottomN = bottom * b.bottom;
+        Fraction f = Fraction(topN, bottomN);
+        f = gcdF(f);
+        return f;
+    }
+
+};
+
+int main() {
+
+
+    return 0;
+}
