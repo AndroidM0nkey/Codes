@@ -1,0 +1,145 @@
+//we all started from the bottom
+//I hope it will end one day
+#include<iostream>
+#include<set>
+#include<map>
+#include<cmath>
+#include<algorithm>
+#include<stack>
+#include<deque>
+#include<queue>
+#include<vector>
+#include<string>
+#include<iomanip>
+#define ll long long
+#define int long long
+#define ld long double
+
+
+using namespace std;
+
+#pragma GCC optimize("Ofast,no-stack-protector")
+#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
+#pragma GCC optimize("O3")
+#pragma GCC optimize("unroll-loops")
+#pragma GCC optimize("fast-math")
+#pragma GCC optimize("section-anchors")
+#pragma GCC optimize("profile-values,profile-reorder-functions,tracer")
+#pragma GCC optimize("vpt")
+#pragma GCC optimize("rename-registers")
+#pragma GCC optimize("move-loop-invariants")
+#pragma GCC optimize("unswitch-loops")
+#pragma GCC optimize("function-sections")
+#pragma GCC optimize("data-sections")
+#pragma GCC optimize("branch-target-load-optimize")
+#pragma GCC optimize("branch-target-load-optimize2")
+#pragma GCC optimize("btr-bb-exclusive")
+
+struct Node {
+	int key, prior, size = 1;
+	//              ^ размер поддерева
+	Node *l = 0, *r = 0;
+	Node(int _key) { key = _key, prior = rand(); }
+};
+int size(Node *v) { return v ? v->size : 0; }
+
+void upd(Node *v) { v->size = 1 + size(v->l) + size(v->r); }
+
+
+typedef pair<Node*, Node*> Pair;
+
+Pair split(Node *p, int k) {
+	if (!p) return { 0, 0 };
+	if (size(p->l) + 1 <= k) {
+		Pair q = split(p->r, k - size(p->l) - 1);
+		//                   ^ правый сын не знает количество вершин слева от него
+		p->r = q.first;
+		upd(p);
+		return { p, q.second };
+	}
+	else {
+		Pair q = split(p->l, k);
+		p->l = q.second;
+		upd(p);
+		return { q.first, p };
+	}
+}
+
+Node* merge(Node *l, Node *r) {
+	if (!l) {
+		return r;
+	}
+	if (!r) return l;
+	if (l->prior > r->prior) {
+		l->r = merge(l->r, r);
+		upd(l);
+		return l;
+	}
+	else {
+		r->l = merge(l, r->l);
+		upd(r);
+		return r;
+	}
+}
+//dddddd
+typedef pair<Node*, Node*> Pair;
+
+
+//dddd
+Node *root = 0;
+
+void insert(int x) {
+	Pair q = split(root, x);
+	Node *t = new Node(x);
+	root = merge(q.first, merge(t, q.second));
+}
+Node* ctrlx(int l, int r) {
+	Pair q1 = split(root, r);
+	Pair q2 = split(q1.first, l);
+	root = merge(q2.first, q1.second);
+	return q2.second;
+}
+void ctrlv(Node *v, int k) {
+	Pair q = split(root, k);
+	root = merge(q.first, merge(v, q.second));
+}
+
+void show(Node cur1) {
+	Node cur = cur1;
+	cout << cur.key<<" ";
+	if (cur.l != 0) {
+		cout << "left ";
+		Node curq = *cur.l;
+		show(curq);
+	}
+	if (cur.r != 0) {
+		cout << "right ";
+		Node curw = *cur.r;
+		show(curw);
+	}
+	
+	
+}
+
+
+signed main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+
+
+	int n,m;
+	cin >> n>> m;
+
+	for (int i = 1; i <= n; i++) {
+		insert(i);
+	}
+	show(*root);
+	
+
+
+
+
+	
+	system("pause");
+	return 0;
+}
