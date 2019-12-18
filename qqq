@@ -1,0 +1,116 @@
+//im dead_inside
+#include<iostream>
+#include<set>
+#include<map>
+#include<cmath>
+#include<algorithm>
+#include<stack>
+#include<deque>
+#include<queue>
+#include<vector>
+#include<string>
+#include<iomanip>
+#define ll long long
+#define int long long
+#define ld long double
+
+
+using namespace std;
+
+
+#pragma GCC optimize("Ofast,no-stack-protector")
+//#pragma GCC target("sse,sse2,sse3,ssse3,sse4,popcnt,abm,mmx,avx,tune=native")
+#pragma GCC optimize("O3")
+#pragma GCC optimize("unroll-loops")
+#pragma GCC optimize("fast-math")
+#pragma GCC optimize("section-anchors")
+#pragma GCC optimize("profile-values,profile-reorder-functions,tracer")
+#pragma GCC optimize("vpt")
+#pragma GCC optimize("rename-registers")
+#pragma GCC optimize("move-loop-invariants")
+#pragma GCC optimize("unswitch-loops")
+#pragma GCC optimize("function-sections")
+#pragma GCC optimize("Фdata-sections")
+#pragma GCC optimize("branch-target-load-optimize")
+#pragma GCC optimize("branch-target-load-optimize2")
+#pragma GCC optimize("btr-bb-exclusive")
+
+string str;
+int n;
+int hashe[10003] = { 0 };
+int previ[10003] = { 0 };
+int pw[10003];
+int mod = 2147483647;
+int p = 41;
+
+void poww() {
+	pw[0] = 1;
+	for (int i = 1; i < 10003; i++) {
+		pw[i] = ((pw[i - 1] * p) % mod + mod) % mod;
+	}
+}
+void hashing() {
+	for (int i = 1; i < n; i++) {
+		hashe[i] = ((int(str[i])*pw[n - i]) % mod + mod) % mod;
+	}
+}
+void prefix() {
+	previ[0] = 0;
+	for (int i = 1; i < n; i++) {
+		previ[i] = ((previ[i - 1] + hashe[i])%mod + mod)%mod;
+	}
+}
+int podst(int l, int r) {
+	int answer = ((previ[r] - ((previ[l - 1] * pw[n - (r - l + 2)]) % mod + mod) % mod) % mod + mod) % mod;
+	return answer;
+}
+
+
+signed main() {
+	ios_base::sync_with_stdio(false);
+	cin.tie(0);
+	
+	cin >> str;
+	n = str.size() + 1;
+	str = " " + str;
+	poww();
+	hashing();
+	prefix();
+	for (int i = 0; i < n; i++) {
+		cout << hashe[i] << " ";
+	}
+	cout << endl;
+	for (int i = 0; i < n; i++) {
+		cout << previ[i] << " ";
+	}
+	cout << endl;
+	cout<<podst(2, 2);
+	
+	
+	/*
+	int m;
+	cin >> m;
+	for (int i = 0; i < m; i++) {
+		int l1, r1, l2, r2;
+		cin >> l1 >> r1 >> l2 >> r2;
+		int first = r1 - l1 + 1;
+		int second = r2 - l2 + 1;
+		int top = min(first, second)+1;
+		int low = 0;
+		while (low < top - 1) {
+			int mid = (low + top) / 2;
+			if (podst(l1, mid) == podst(l2, mid)) {
+				low = mid;
+			}
+			else {
+				top = mid;
+			}
+		}
+		cout << low << endl;
+	}
+	*/
+	
+	
+	system("pause");
+	return 0;
+}
