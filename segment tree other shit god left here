@@ -1,65 +1,60 @@
-//прибавление
-void build (int a[], int v, int tl, int tr) {
+const int MAXN = 2 * (10e5) + 1;
+int n;
+
+int q[4 * MAXN] = { 0 };
+int t[4 * MAXN] = { 0 };
+int mod[4 * MAXN] = { 0 };
+
+//build(a, 1, 0, n - 1);
+void build(vector<int> &a, int v, int tl, int tr) {
 	if (tl == tr)
 		t[v] = a[tl];
 	else {
 		int tm = (tl + tr) / 2;
-		build (a, v*2, tl, tm);
-		build (a, v*2+1, tm+1, tr);
+		build(a, v * 2, tl, tm);
+		build(a, v * 2 + 1, tm + 1, tr);
+		t[v] = t[v * 2] + t[v * 2 + 1];
 	}
 }
- 
-void update (int v, int tl, int tr, int l, int r, int add) {
+void build2(vector<int> &a, int v, int tl, int tr) {
+	if (tl == tr)
+		q[v] = a[tl];
+	else {
+		int tm = (tl + tr) / 2;
+		build2(a, v * 2, tl, tm);
+		build2(a, v * 2 + 1, tm + 1, tr);
+		q[v] = q[v * 2] + q[v * 2 + 1];
+	}
+}
+void push(int v) {
+	mod[2 * v] += mod[v];
+	mod[2 * v + 1] += mod[v];
+	mod[v] = 0;
+}
+void update(int v, int tl, int tr, int l, int r, int add) {
 	if (l > r)
 		return;
 	if (l == tl && tr == r)
-		t[v] += add;
+		mod[v] += add;
 	else {
+		push(v);
 		int tm = (tl + tr) / 2;
-		update (v*2, tl, tm, l, min(r,tm), add);
-		update (v*2+1, tm+1, tr, max(l,tm+1), r, add);
+		update(v * 2, tl, tm, l, min(r, tm), add);
+		update(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r, add);
+		t[v] = (t[2 * v] + (q[2 * v] * mod[2 * v])) + (t[2 * v + 1] + (q[2 * v + 1] * mod[2 * v + 1]));
 	}
 }
- 
-int get (int v, int tl, int tr, int pos) {
-	if (tl == tr)
-		return t[v];
-	int tm = (tl + tr) / 2;
-	if (pos <= tm)
-		return t[v] + get (v*2, tl, tm, pos);
-	else
-		return t[v] + get (v*2+1, tm+1, tr, pos);
-}
 
-
-//присвоение
-void push (int v) {
-	if (t[v] != -1) {
-		t[v*2] = t[v*2+1] = t[v];
-		t[v] = -1;
-	}
-}
- 
-void update (int v, int tl, int tr, int l, int r, int color) {
+int sum(int v, int tl, int tr, int l, int r) {
 	if (l > r)
-		return;
-	if (l == tl && tr == r)
-		t[v] = color;
-	else {
-		push (v);
-		int tm = (tl + tr) / 2;
-		update (v*2, tl, tm, l, min(r,tm), color);
-		update (v*2+1, tm+1, tr, max(l,tm+1), r, color);
+		return 0;
+	if (l == tl && r == tr) {
+		return t[v] + (q[v] * mod[v]);
 	}
-}
- 
-int get (int v, int tl, int tr, int pos) {
-	if (tl == tr)
-		return t[v];
-	push (v);
-	int tm = (tl + tr) / 2;
-	if (pos <= tm)
-		return get (v*2, tl, tm, pos);
-	else
-		return get (v*2+1, tm+1, tr, pos);
+	push(v);
+	int tm = (tl + tr) / 2;	
+	int ans = sum(v * 2, tl, tm, l, min(r, tm))
+		+ sum(v * 2 + 1, tm + 1, tr, max(l, tm + 1), r);
+	t[v] = (t[2 * v] + (q[2 * v] * mod[2 * v])) + (t[2 * v + 1] + (q[2 * v + 1] * mod[2 * v + 1]));
+	return ans;
 }
